@@ -1,11 +1,23 @@
 from typing import Union
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import requests
 import regex
 import math 
 import metadata
 
 app = FastAPI(openapi_tags=metadata.tags_metadata, title=metadata.app_title, version=metadata.version, description=metadata.description)
+
+# cors
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 accepted_currencies = ['PHP', 'USD', 'AUD', 'EUR', 'JPY']  
 output = {
