@@ -37,8 +37,8 @@ def read_root():
 
 
 # denomination page
-@app.get("/denomination", tags=['currency_from', 'currency_to', 'from_value'])
-def convert_denomination(currency_from: str, currency_to: str, from_value: float):
+@app.get("/denomination", tags=['currency_from', 'currency_to', 'from_value', 'available_denomination'])
+def convert_denomination(currency_from: str, currency_to: str, from_value: float, available_denomination: str):
     try:
 
         # currency_from or currency_to not in accepted_currencies
@@ -53,7 +53,7 @@ def convert_denomination(currency_from: str, currency_to: str, from_value: float
             raise ValueError(f'negative from_value')
 
         convert_currency(currency_from.upper(), currency_to.upper(), from_value)
-        output['to_denomination'] = regex.get_denomination(regex.currencies[output['to']], output['to_value'])
+        output['to_denomination'] = regex.get_denomination(regex.currencies[output['to']], output['to_value'], available_denomination)
         
     except ValueError as e:
         return {'error': e.args[0]}

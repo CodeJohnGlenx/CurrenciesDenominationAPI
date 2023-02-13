@@ -7,6 +7,7 @@ regex.py
 
 import re 
 from typing import Union
+import ast
 
 # Philippine Peso (PHP) Denomination Regex
 PHP = {
@@ -111,23 +112,42 @@ parameters:
 
 returns -> dict - a dictionary containing denomination values
 """
-def get_denomination(denomination: dict, value: Union[int, float]):
+def get_denomination(denomination: dict, value: Union[int, float], available_denomination: str):
     denomination_output = {}
 
-    # iterate every denomination regex rule 
-    for d in denomination:
-        # get number of denomination if regex matches 
-        if re.match(denomination[d], str(value)):
-            # whole number processing
-            if value >= 1:
-                denomination_output[d] = int(value // int(d))
-                value = round(value % int(d), 2)
-            # floating-part processing
-            else:
-                denomination_output[d] = int(round(value / float(d), 3))
-                value = round(value % float(d), 2)
+    if available_denomination != "all":
+        available_denomination = ast.literal_eval(available_denomination)
+        available_denomination.sort(reverse=True)
+        available_denomination = list(dict.fromkeys(available_denomination))
+        available_denomination = [str(i) for i in available_denomination]
+
+    if available_denomination == "all":
+        # iterate every denomination regex rule 
+        for d in denomination:
+            # get number of denomination if regex matches 
+            if re.match(denomination[d], str(value)):
+                # whole number processing
+                if value >= 1:
+                    denomination_output[d] = int(value // int(d))
+                    value = round(value % int(d), 2)
+                # floating-part processing
+                else:
+                    denomination_output[d] = int(round(value / float(d), 3))
+                    value = round(value % float(d), 2)
+    else:
+        for d in denomination:
+            if d in available_denomination:
+                # whole number processing
+                if value >= 1:
+                    if (int(value // float(d))) >= 1:
+                        denomination_output[d] = int(value // float(d))
+                        value = round(value % float(d), 2)
+                # floating-part processing
+                else:
+                    if (int(round(value / float(d), 3))) >= 1:
+                        denomination_output[d] = int(round(value / float(d), 3))
+                        value = round(value % float(d), 2)
     
-    # return denomination
     return denomination_output
 
 
