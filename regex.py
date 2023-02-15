@@ -21,7 +21,7 @@ PHP = {
     '5': '^[5-9](.\d{1,2})?$',  # 5-9.99
     '1': '^[1-4](.\d{1,2})?$',  # 1-4.99
     '0.25': '^0.2[5-9]$|^0.[3-9](\d)?$',  # 0.25-0.99
-    '0.10': '^0.1(\d)?$|^0.2([0-4])?$',  # 0.10-0.24
+    '0.1': '^0.1(\d)?$|^0.2([0-4])?$',  # 0.10-0.24
     '0.05': '^0.0[5-9]$',  # 0.05-0.09
     '0.01': '^0.0[1-4]$',  # 0.01-0.04
 }
@@ -35,9 +35,9 @@ USD = {
     '5': '^[5-9](.\d{1,2})?$',  # 5-9.99
     '2': '^[2-4](.\d{1,2})?$', # 2-4.99
     '1': '^1(.\d{1,2})?$',  # 1-1.99
-    '0.50': '^0.[5-9](\d)?$', # 0.5-0.99
+    '0.5': '^0.[5-9](\d)?$', # 0.5-0.99
     '0.25': '^0.2[5-9]$|^0.[3-4](\d)?$',  # 0.25-0.49
-    '0.10': '^0.1(\d)?$|^0.2([0-4])?$',  # 0.10-0.24
+    '0.1': '^0.1(\d)?$|^0.2([0-4])?$',  # 0.10-0.24
     '0.05': '^0.0[5-9]$',  # 0.05-0.09
     '0.01': '^0.0[1-4]$',  # 0.01-0.04
 }
@@ -53,9 +53,9 @@ EUR = {
     '5': '^[5-9](.\d{1,2})?$',  # 5-9.99
     '2': '^[2-4](.\d{1,2})?$', # 2-4.99
     '1': '^1(.\d{1,2})?$',  # 1-1.99
-    '0.50': '^0.[5-9](\d)?$', # 0.5-0.99
-    '0.20': '^0.[2-4](\d)?$',  # 0.2-0.49
-    '0.10': '^0.1(\d)?$',  # 0.10-0.19
+    '0.5': '^0.[5-9](\d)?$', # 0.5-0.99
+    '0.2': '^0.[2-4](\d)?$',  # 0.2-0.49
+    '0.1': '^0.1(\d)?$',  # 0.10-0.19
     '0.05': '^0.0[5-9]$',  # 0.05-0.09
     '0.02': '^0.0[2-4]$', # 0.02-0.04
     '0.01': '^0.01$', # 0.01
@@ -73,9 +73,9 @@ AUD = {
     '5': '^[5-9](.\d{1,2})?$',  # 5-9.99
     '2': '^[2-4](.\d{1,2})?$', # 2-4.99
     '1': '^1(.\d{1,2})?$',  # 1-1.99
-    '0.50': '^0.[5-9](\d)?$', # 0.5-0.99
-    '0.20': '^0.[2-4](\d)?$',  # 0.2-0.49
-    '0.10': '^0.1(\d)?$',  # 0.10-0.19
+    '0.5': '^0.[5-9](\d)?$', # 0.5-0.99
+    '0.2': '^0.[2-4](\d)?$',  # 0.2-0.49
+    '0.1': '^0.1(\d)?$',  # 0.10-0.19
     '0.05': '^0.0[5-9]$',  # 0.05-0.09
 }
 
@@ -126,6 +126,7 @@ def get_denomination(denomination: dict, value: Union[int, float], available_den
         for d in denomination:
             # get number of denomination if regex matches 
             if re.match(denomination[d], str(value)):
+                print(available_denomination)
                 # whole number processing
                 if value >= 1:
                     denomination_output[d] = int(value // int(d))
@@ -137,16 +138,13 @@ def get_denomination(denomination: dict, value: Union[int, float], available_den
     else:
         for d in denomination:
             if d in available_denomination:
-                # whole number processing
                 if value >= 1:
-                    if (int(value // float(d))) >= 1:
-                        denomination_output[d] = int(value // float(d))
-                        value = round(value % float(d), 2)
+                    denomination_output[d] = int(value // float(d))
+                    value = round(value % float(d), 2)
                 # floating-part processing
                 else:
-                    if (int(round(value / float(d), 3))) >= 1:
-                        denomination_output[d] = int(round(value / float(d), 3))
-                        value = round(value % float(d), 2)
+                    denomination_output[d] = int(round(value / float(d), 3))
+                    value = round(value % float(d), 2)
     
     return denomination_output
 
